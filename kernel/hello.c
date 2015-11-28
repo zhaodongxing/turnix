@@ -6,6 +6,8 @@
  * set when that data is transferred to the TDR
  */
 #define USART_FLAG_TXE	((uint16_t) 0x0080)
+char stack1[128];
+char stack2[128];
 
 void print_str(const char *str)
 {
@@ -16,9 +18,21 @@ void print_str(const char *str)
 	}
 }
 
-void main(void)
+void thread1(void){
+    while(1){
+	    print_str("i'm in thread 1!\n");
+    }
+}
+
+void thread2(void){
+    while(1){
+	    print_str("i'm in thread 2!\n");
+    }
+}
+
+void init_usart()
 {
-	*(RCC_APB2ENR) |= (uint32_t) (0x00000001 | 0x00000004);
+    *(RCC_APB2ENR) |= (uint32_t) (0x00000001 | 0x00000004);
 	*(RCC_APB1ENR) |= (uint32_t) (0x00020000);
 
 	/* USART2 Configuration, Rx->PA3, Tx->PA2 */
@@ -32,7 +46,11 @@ void main(void)
 	*(USART2_CR2) = 0x00000000;
 	*(USART2_CR3) = 0x00000000;
 	*(USART2_CR1) |= 0x2000;
+}
 
+void main(void)
+{
+    init_usart();
 	print_str("Hello World!\n");
 
 	while (1);

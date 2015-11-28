@@ -41,4 +41,11 @@
 #define USART2_CR3	((__REG) (USART2 + 0x14))
 #define USART2_GTPR	((__REG) (USART2 + 0x18))
 
+/* NVIC Memory Map */
+#define NVIC           ((__REG_TYPE) 0x40004400)
+#define NVIC_INT_CTRL  ((__REG) (0xE000ED04)) 
+#define NVIC_SYS_PRI14 ((__REG) (0xE000ED22)) 
+#define NVIC_PENDSV_PRI (0xFF) 
+#define NVIC_PENDSV_SET (0x10000000)
+
 #endif

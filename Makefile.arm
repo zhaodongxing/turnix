@@ -1,8 +1,10 @@
 KERNEL := turnix
 CROSS_COMPILE ?= arm-none-eabi-
-CFLAGS += -Wall -Werror -Wextra -O2 -nostdlib -nostdinc -fno-builtin \
-	  -fno-stack-protector -nostartfiles -nodefaultlibs -std=gnu99 \
-	  -Iinclude -ffreestanding -mthumb
+CFLAGS = -fno-common -ffreestanding -O0 -std=gnu99 \
+	 -gdwarf-2 -g3 -Wall -Werror \
+	 -mcpu=cortex-m3 -mthumb \
+	 -Wl,-Tos.ld -nostartfiles -Iinclude\
+
 LDFLAGS += -T armlink.ld 
 CC := ${CROSS_COMPILE}gcc
 LD := ${CROSS_COMPILE}ld
@@ -16,19 +18,13 @@ SIZE := ${CROSS_COMPILE}size
 STRIP := ${CROSS_COMPILE}strip
 SHELL := /bin/bash
 APPLICATION ?= applications/shell.o
-export SHELLOPTS := errexit:pipefail
+#export SHELLOPTS := errexit:pipefail
+export SHELLOPTS := errexit
 
 include Config.mk
 
-ifeq (${CONFIG_DEBUG},1)
-	CFLAGS += -g
-else
-	CFLAGS += -fdata-sections -ffunction-sections -DNDEBUG
-	LDFLAGS += --gc-sections --print-gc-sections
-endif
-
 ASMOBJS = 
-COBJS = kernel/hello.o boot/startup.o 
+COBJS = kernel/os.o kernel/startup.o kernel/malloc.o kernel/threads.o 
 DEPS = $(COBJS:.o=.d)
 OBJS = ${ASMOBJS} ${COBJS}
 

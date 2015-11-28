@@ -8,12 +8,12 @@
 #define RCC_CR_CSSON	((uint32_t) 0x00080000)		/*!< Clock Security System enable */
 
 /* Bit definition for RCC_CFGR register */
-#define RCC_CFGR_SW		((uint32_t) 0x00000003)	/*!< SW[1:0] bits (System clock Switch) */
-#define RCC_CFGR_SW_HSE		((uint32_t) 0x00000001)	/*!< HSE selected as system clock */
-#define RCC_CFGR_SWS		((uint32_t) 0x0000000C)	/*!< SWS[1:0] bits (System Clock Switch Status) */
-#define RCC_CFGR_HPRE_DIV1	((uint32_t) 0x00000000)	/*!< SYSCLK not divided */
-#define RCC_CFGR_PPRE1_DIV1	((uint32_t) 0x00000000)	/*!< HCLK not divided */
-#define RCC_CFGR_PPRE2_DIV1	((uint32_t) 0x00000000)	/*!< HCLK not divided */
+#define  RCC_CFGR_SW		((uint32_t) 0x00000003)	/*!< SW[1:0] bits (System clock Switch) */
+#define  RCC_CFGR_SW_HSE	((uint32_t) 0x00000001)	/*!< HSE selected as system clock */
+#define  RCC_CFGR_SWS		((uint32_t) 0x0000000C)	/*!< SWS[1:0] bits (System Clock Switch Status) */
+#define  RCC_CFGR_HPRE_DIV1	((uint32_t) 0x00000000)	/*!< SYSCLK not divided */
+#define  RCC_CFGR_PPRE1_DIV1	((uint32_t) 0x00000000)	/*!< HCLK not divided */
+#define  RCC_CFGR_PPRE2_DIV1	((uint32_t) 0x00000000)	/*!< HCLK not divided */
 
 /* Bit definition for FLASH_ACR register */
 #define FLASH_ACR_LATENCY	((uint8_t) 0x03)	/*!< LATENCY[2:0] bits (Latency) */
@@ -26,7 +26,7 @@
 extern void main(void);
 
 /* start address for the initialization values of the .data section.
-defined in linker script */
+ * defined in linker script */
 extern uint32_t _sidata;
 /* start address for the .data section. defined in linker script */
 extern uint32_t _sdata;
@@ -56,31 +56,36 @@ void reset_handler(void)
 
 	/* Clock system intitialization */
 	rcc_clock_init();
-    OSStart_Asm();
 
 	main();
 }
 
-void default_handler(void){
-    while(1);
+void default_handler(void)
+{
+	while (1);
 }
 
-void init_pendsv_exception(void){
-
-}
+void nmi_handler(void) __attribute((weak, alias("default_handler")));
+void hardfault_handler(void) __attribute((weak, alias("default_handler")));
+void memmanage_handler(void) __attribute((weak, alias("default_handler")));
+void busfault_handler(void) __attribute((weak, alias("default_handler")));
+void usagefault_handler(void) __attribute((weak, alias("default_handler")));
+void svc_handler(void) __attribute((weak, alias("default_handler")));
+void pendsv_handler(void) __attribute((weak, alias("default_handler")));
+void systick_handler(void) __attribute((weak, alias("default_handler")));
 
 __attribute((section(".isr_vector")))
 uint32_t *isr_vectors[] = {
-    [0x00] = (uint32_t *) &_estack,         /* stack pointer */
-    [0x01] = (uint32_t *) reset_handler,        /* code entry point */
-    [0x02] = (uint32_t *) default_handler,      /* NMI handler */
-    [0x03] = (uint32_t *) default_handler,    /* hard fault handler */
-    [0x04] = (uint32_t *) default_handler,    /* mem manage handler */
-    [0x05] = (uint32_t *) default_handler,     /* bus fault handler */
-    [0x06] = (uint32_t *) default_handler,   /* usage fault handler */
-    [0x0B] = (uint32_t *) default_handler,      /* svc handler */
-    [0x0E] = (uint32_t *) pendsv_handler,       /* pendsv handler */
-    [0x0F] = (uint32_t *) default_handler       /* systick handler */
+	[0x00] = (uint32_t *) &_estack,			/* stack pointer */
+	[0x01] = (uint32_t *) reset_handler,		/* code entry point */
+	[0x02] = (uint32_t *) nmi_handler,		/* NMI handler */
+	[0x03] = (uint32_t *) hardfault_handler,	/* hard fault handler */
+	[0x04] = (uint32_t *) memmanage_handler,	/* mem manage handler */
+	[0x05] = (uint32_t *) busfault_handler,		/* bus fault handler */
+	[0x06] = (uint32_t *) usagefault_handler,	/* usage fault handler */
+	[0x0B] = (uint32_t *) svc_handler,		/* svc handler */
+	[0x0E] = (uint32_t *) pendsv_handler,		/* pendsv handler */
+	[0x0F] = (uint32_t *) systick_handler		/* systick handler */
 };
 
 void rcc_clock_init(void)
@@ -110,7 +115,7 @@ void rcc_clock_init(void)
 
 	/* SYSCLK, HCLK, PCLK2 and PCLK1 configuration ---------------------------*/
 	/* Enable HSE */
-	*RCC_CR |= (uint32_t) RCC_CR_HSEON;
+	*RCC_CR |= ((uint32_t)RCC_CR_HSEON);
 
 	/* Wait till HSE is ready and if Time out is reached exit */
 	do {
@@ -128,7 +133,7 @@ void rcc_clock_init(void)
 		*FLASH_ACR |= FLASH_ACR_PRFTBE;
 
 		/* Flash 0 wait state */
-		*FLASH_ACR &= (uint32_t) ((uint32_t) ~FLASH_ACR_LATENCY);
+		*FLASH_ACR &= (uint32_t)((uint32_t) ~FLASH_ACR_LATENCY);
 
 		*FLASH_ACR |= (uint32_t) FLASH_ACR_LATENCY_0;
 
@@ -142,7 +147,7 @@ void rcc_clock_init(void)
 		*RCC_CFGR |= (uint32_t) RCC_CFGR_PPRE1_DIV1;
 
 		/* Select HSE as system clock source */
-		*RCC_CFGR &= (uint32_t) ((uint32_t) ~(RCC_CFGR_SW));
+		*RCC_CFGR &= (uint32_t)((uint32_t) ~(RCC_CFGR_SW));
 		*RCC_CFGR |= (uint32_t) RCC_CFGR_SW_HSE;
 
 		/* Wait till HSE is used as system clock source */

@@ -4,6 +4,11 @@
 #define __REG_TYPE	volatile uint32_t
 #define __REG		__REG_TYPE *
 
+#define SCS_BASE                        (uint32_t) (0xE000E000)
+#define SCB_BASE                        (SCS_BASE + 0x0D00)
+#define SCB_ICSR                        (volatile uint32_t *) (SCB_BASE + 0x004)
+#define SCB_ICSR_PENDSVSET              (uint32_t) (1 << 28)
+
 /* RCC Memory Map */
 #define RCC		((__REG_TYPE) 0x40021000)
 #define RCC_CR		((__REG) (RCC + 0x00))
@@ -41,11 +46,11 @@
 #define USART2_CR3	((__REG) (USART2 + 0x14))
 #define USART2_GTPR	((__REG) (USART2 + 0x18))
 
-/* NVIC Memory Map */
-#define NVIC           ((__REG_TYPE) 0x40004400)
-#define NVIC_INT_CTRL  ((__REG) (0xE000ED04)) 
-#define NVIC_SYS_PRI14 ((__REG) (0xE000ED22)) 
-#define NVIC_PENDSV_PRI (0xFF) 
-#define NVIC_PENDSV_SET (0x10000000)
+/* SysTick Memory Map */
+#define SYSTICK		((__REG_TYPE) 0xE000E010)
+#define SYSTICK_CTRL	((__REG) (SYSTICK + 0x00))
+#define SYSTICK_LOAD	((__REG) (SYSTICK + 0x04))
+#define SYSTICK_VAL	((__REG) (SYSTICK + 0x08))
+#define SYSTICK_CALIB	((__REG) (SYSTICK + 0x0C))
 
 #endif

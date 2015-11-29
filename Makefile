@@ -2,7 +2,7 @@ KERNEL := turnix
 CFLAGS += -Wall -Werror -Wextra -O2 -nostdlib -nostdinc -fno-builtin \
 	  -fno-stack-protector -nostartfiles -nodefaultlibs -std=gnu99 \
 	  -Iinclude -ffreestanding
-ARCH ?= i386
+ARCH ?= arm
 include arch/${ARCH}/Makefile
 LDFLAGS += -T ${LINK_SCRIPT}
 CC := ${CROSS_COMPILE}gcc
@@ -28,9 +28,6 @@ else
 	LDFLAGS += --gc-sections --print-gc-sections
 endif
 
-COBJS += kernel/main.o lib/string.o lib/stdio.o lib/stdlib.o \
-	 kernel/interrupt.o lib/hexdump.o kernel/timer.o lib/circular_buffer.o \
-	 kernel/pthread.o lib/readline.o ${APPLICATION} lib/time.o
 DEPS = $(COBJS:.o=.d)
 OBJS = ${ASMOBJS} ${COBJS}
 

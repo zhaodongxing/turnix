@@ -65,3 +65,21 @@ struct arch_context{
     unsigned long sp;
 };
 
+static inline int atomic_add_return(int v, volatile int *ptr)
+{
+	int retval = v;
+
+	asm volatile("retry: mov r4, %4\n\t"
+	             "ldrex r5, %3\n\t" 
+	             "add r4,r4,r5\n\t"
+                 "strex r5,r4,%0\n\t"
+                 "cmp r5,#0\n\t"
+                 "bne retry\n\t"
+                 "streq r4,%1\n\t"
+                 : "=m"(*ptr),"+l"(retval)
+                 : "0"(*ptr),"1"(retval)
+                 : "r4","r5");
+	return retval;
+}
+
+

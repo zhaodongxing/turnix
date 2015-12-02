@@ -22,64 +22,30 @@
  * THE SOFTWARE.
  */
 
-void arch_init(void);
-static inline unsigned long interrupt_disable(void)
+static unsigned long interrupt_disable(void)
 {
     unsigned long flags;
     asm volatile("mrs %0,primask\n"
-                 "cpsid i\n"
-                 :"=r"(flags));
+                 "cpsid i\n":"=r"(flags));
     return flags;
 }
-
-static inline void interrupt_enable(unsigned long flags)
+static void interrupt_enable(unsigned long flags)
 {
-    asm volatile("msr primask,%0\n"::"=m"(flags));
+    asm volatile("msr primask,%0\n"::"r"(flags));
 }
 
-static inline void arch_context_switch(void)
-{
-    *SCB_ICSR |= SCB_ICSR_PENDSVSET;
-}
-
-struct interrupt_contex {
-    uint32_t r4;
-    uint32_t r5;
-    uint32_t r6;
-    uint32_t r7;
-    uint32_t r8;
-    uint32_t r9;
-    uint32_t r10;
-    uint32_t r11;
-    uint32_t r0;
-    uint32_t r1;
-    uint32_t r2;
-    uint32_t r3;
-    uint32_t ip;
-    uint32_t lr;
-    uint32_t pc;
-    uint32_t psr;
-};
-
-struct arch_context{
-    unsigned long sp;
-};
-
-static inline int atomic_add_return(int v, volatile int *ptr)
+static int atomic_add_return(int v, volatile int *ptr)
 {
 	int retval = v;
 
-	asm volatile("retry: mov r4, %4\n"
-	             "ldrex r5, %3\n" 
-	             "add r4,r4,r5\n"
+	asm volatile("ldrex r4, %1\n" 
+	             "add r4,r4,%2\n"
                  "strex r5,r4,%0\n"
                  "cmp r5,#0\n"
-                 "bne retry\n"
-                 "streq r4,%1\n"
-                 : "=m"(*ptr),"+l"(retval)
-                 : "0"(*ptr),"1"(retval)
+                 "streq r5,%0"
+                 : "=m"(*ptr)
+                 : "m"(*ptr),"r"(retval)
                  : "r4","r5");
 	return retval;
 }
-
 

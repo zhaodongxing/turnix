@@ -27,7 +27,7 @@
 #include <kernel.h>
 
 #define THREAD_PSP (0XFFFFFFFD)
-#define PSR_THUMB  (0X21000000)
+#define PSR_THUMB  (0X01000000)
 
 void arch_early_init(void)
 {
@@ -53,11 +53,7 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 	struct interrupt_context *ctx;
 
 	stack = (unsigned long *)((char *)th->stack_addr + th->stack_size);
-	stack[-1] = (unsigned long)arg;
-	stack[-2] = (unsigned long)start_routine;
-	stack[-3] = (unsigned long)abort;
 	ctx = (struct interrupt_context *)(stack - 1) - 1;
-	ctx->rtn_state = (unsigned long)THREAD_PSP;
 	ctx->r0 = (unsigned long)(arg);
     ctx->ip = (unsigned long)abort;
     ctx->pc = (unsigned long)start_routine;

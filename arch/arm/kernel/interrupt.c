@@ -22,26 +22,19 @@ extern uint32_t _estack;
  */
 void __attribute__((naked)) pendsv_handler()
 {
-    /* Save the old task's context */
+    asm volatile("cpsid i\n");
     asm volatile("mrs   r0, psp\n"
                  "stmdb r0!, {r4-r11, lr}\n");
-    /* To get the task pointer address from result r0 */
-    asm volatile("mov   %0, r0\n" : "=r" (tasks[lastTask].stack));
+    asm volatile("mov   %0, r0\n" : "=r"(pthread_current));
 
-    /* Find a new task to run */
-    while (1) {
-        lastTask++;
-        if (lastTask == MAX_TASKS)
-            lastTask = 0;
-        if (tasks[lastTask].in_use) {
-            /* Move the task's stack pointer address into r0 */
-            asm volatile("mov r0, %0\n" : : "r" (tasks[lastTask].stack));
-            /* Restore the new task's context and jump to the task */
-            asm volatile("ldmia r0!, {r4-r11, lr}\n"
-                         "msr psp, r0\n"
-                         "bx lr\n");
-        }
-    }
+    /* Move the task's stack pointer address into r0 */
+    asm volatile("mov r0, %0\n" : : "r" (pthread_next));
+    /* Restore the new task's context and jump to the task */
+    asm volatile("ldmia r0!, {r4-r11}\n"
+                 "msr psp, r0\n"
+                 "orr lr,lr,=0x04\n"
+                 "cpsie i\n"
+                 "bx lr\n");
 }
 
 

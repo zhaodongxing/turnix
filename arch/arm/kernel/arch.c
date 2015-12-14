@@ -41,6 +41,7 @@ void switch_to_thread_mode(void){
 
 
 }
+
 void arch_init(void)
 {
     rcc_clock_init();

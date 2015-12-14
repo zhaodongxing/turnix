@@ -1,3 +1,5 @@
+#include "arch.h"
+
 void _start(void)
 {
 	/* Copy the data segment initializers from flash to SRAM */
@@ -11,8 +13,7 @@ void _start(void)
 	uint32_t *bss_end = &_ebss;
 	while (bss_begin < bss_end) *bss_begin++ = 0;
 
-	/* Clock system intitialization */
-	rcc_clock_init();
+    arch_init();
 
 	main();
 }

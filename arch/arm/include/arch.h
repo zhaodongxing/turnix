@@ -21,6 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef _ARCH_H_
+#define _ARCH_H_
+
+#include <stdint.h>
+#include <reg.h>
 
 void arch_init(void);
 static inline unsigned long interrupt_disable(void)
@@ -34,7 +39,7 @@ static inline unsigned long interrupt_disable(void)
 
 static inline void interrupt_enable(unsigned long flags)
 {
-    asm volatile("msr primask,%0\n"::"=m"(flags));
+    asm volatile("msr primask,%0\n"::"r"(flags));
 }
 
 static inline void arch_context_switch(void)
@@ -68,18 +73,20 @@ struct arch_context{
 static inline int atomic_add_return(int v, volatile int *ptr)
 {
 	int retval = v;
-
-	asm volatile("retry: mov r4, %4\n"
-	             "ldrex r5, %3\n" 
-	             "add r4,r4,r5\n"
+    asm volatile("retry:ldrex r4, %1\n" 
+	             "add r4,r4,%2\n"
                  "strex r5,r4,%0\n"
                  "cmp r5,#0\n"
+                 "ite eq\n"
+                 "streq r4,%0\n"
                  "bne retry\n"
-                 "streq r4,%1\n"
-                 : "=m"(*ptr),"+l"(retval)
-                 : "0"(*ptr),"1"(retval)
+                 : "=m"(*ptr)
+                 : "m"(*ptr),"r"(retval)
                  : "r4","r5");
 	return retval;
 }
 
+void _start(void);
+
+#endif
 

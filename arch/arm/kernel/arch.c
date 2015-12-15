@@ -25,6 +25,7 @@
 #include <arch.h>
 #include <pthread.h>
 #include <kernel.h>
+#include <hw_init.h>
 
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)

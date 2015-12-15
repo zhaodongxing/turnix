@@ -38,11 +38,13 @@ static int atomic_add_return(int v, volatile int *ptr)
 {
 	int retval = v;
 
-	asm volatile("ldrex r4, %1\n" 
+	asm volatile("retry:ldrex r4, %1\n" 
 	             "add r4,r4,%2\n"
                  "strex r5,r4,%0\n"
                  "cmp r5,#0\n"
-                 "streq r5,%0"
+                 "ite eq\n"
+                 "streq r4,%0\n"
+                 "bne retry\n"
                  : "=m"(*ptr)
                  : "m"(*ptr),"r"(retval)
                  : "r4","r5");

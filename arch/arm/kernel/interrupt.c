@@ -1,7 +1,11 @@
+#include <stdint.h>
+#include <arch.h>
+#include <kernel.h>
+#include <errno.h>
+#include "pthread.h"
 
 /* main program entry point */
 extern void main(void);
-
 /* start address for the initialization values of the .data section.
  * defined in linker script */
 extern uint32_t _sidata;
@@ -16,6 +20,8 @@ extern uint32_t _ebss;
 /* end address for the stack. defined in linker script */
 extern uint32_t _estack;
 
+extern pthread_t pthread_next;
+
 
 /* FIXME: Without naked attribute, GCC will corrupt r7 which is used for stack
  * pointer. If so, after restoring the tasks' context, we will get wrong stack
@@ -26,14 +32,12 @@ void __attribute__((naked)) pendsv_handler()
     asm volatile("cpsid i\n");
     asm volatile("mrs   r0, psp\n"
                  "stmdb r0!, {r4-r11, lr}\n");
-    asm volatile("mov   %0, r0\n" : "=r"(pthread_current));
+    asm volatile("str  r0,%0\n" : "=m"(pthread_current));
 
-    /* Move the task's stack pointer address into r0 */
-    asm volatile("mov r0, %0\n" : : "r" (pthread_next));
-    /* Restore the new task's context and jump to the task */
+    asm volatile("ldr r0, %0\n" : : "m" (pthread_next));
     asm volatile("ldmia r0!, {r4-r11}\n"
                  "msr psp, r0\n"
-                 "orr lr,lr,=0x04\n"
+                 "orr lr,lr,0x04\n"
                  "cpsie i\n"
                  "bx lr\n");
 }
@@ -50,8 +54,8 @@ void memmanage_handler(void) __attribute((weak, alias("default_handler")));
 void busfault_handler(void) __attribute((weak, alias("default_handler")));
 void usagefault_handler(void) __attribute((weak, alias("default_handler")));
 void svc_handler(void) __attribute((weak, alias("default_handler")));
-void pendsv_handler(void) __attribute((weak, alias("default_handler")));
 void systick_handler(void) __attribute((weak, alias("default_handler")));
+void timer_update(void) __attribute((weak, alias("default_handler")));
 
 __attribute((section(".isr_vector")))
 uint32_t *isr_vectors[] = {

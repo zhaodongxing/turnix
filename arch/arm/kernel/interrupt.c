@@ -4,25 +4,8 @@
 #include <errno.h>
 #include "pthread.h"
 
-/* main program entry point */
-extern void main(void);
-/* start address for the initialization values of the .data section.
- * defined in linker script */
-extern uint32_t _sidata;
-/* start address for the .data section. defined in linker script */
-extern uint32_t _sdata;
-/* end address for the .data section. defined in linker script */
-extern uint32_t _edata;
-/* start address for the .bss section. defined in linker script */
-extern uint32_t _sbss;
-/* end address for the .bss section. defined in linker script */
-extern uint32_t _ebss;
-/* end address for the stack. defined in linker script */
-extern uint32_t _estack;
 
 extern pthread_t pthread_next;
-
-
 /* FIXME: Without naked attribute, GCC will corrupt r7 which is used for stack
  * pointer. If so, after restoring the tasks' context, we will get wrong stack
  * pointer.

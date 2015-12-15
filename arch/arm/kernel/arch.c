@@ -35,6 +35,23 @@ void arch_early_init(void)
     usart_init();
 }
 
+static int atomic_add_return(int v, volatile int *ptr)
+{
+	int retval = v;
+    asm volatile("again: ldrex r4, %1\n" 
+	             "add r4,r4,%2\n"
+                 "strex r5,r4,%0\n"
+                 "cmp r5,#0\n"
+                 "ite eq\n"
+                 "streq r4,%0\n"
+                 "bne again\n"
+                 : "=m"(*ptr)
+                 : "m"(*ptr),"r"(retval)
+                 : "r4","r5");
+	return retval;
+}
+
+
 void switch_to_thread_mode(void){
     /* Save kernel context */
     asm volatile("mrs ip, psr\n"
@@ -49,7 +66,7 @@ void arch_init(void)
 }
 
 void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
-		       void *(*start_routine)(void *), void *arg)
+		               void *(*start_routine)(void *), void *arg)
 {
 	unsigned long *stack;
 	struct interrupt_context *ctx;

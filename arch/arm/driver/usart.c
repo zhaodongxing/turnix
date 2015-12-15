@@ -30,5 +30,6 @@ int putchar(int c)
 {
     while (!(*(USART2_SR) & USART_FLAG_TXE));
     *(USART2_DR) = (c & 0xFF);
+    return 0;
 }
 

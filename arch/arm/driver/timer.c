@@ -1,3 +1,4 @@
+#include <reg.h>
 /* 72MHz */
 #define CPU_CLOCK_HZ 72000000
 
@@ -10,4 +11,5 @@ int timer_init()
 	*SYSTICK_LOAD = (CPU_CLOCK_HZ / TICK_RATE_HZ) - 1UL;
 	*SYSTICK_VAL = 0;
 	*SYSTICK_CTRL = 0x07;
+    return 0;
 }

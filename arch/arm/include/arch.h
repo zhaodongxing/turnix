@@ -27,6 +27,22 @@
 #include <stdint.h>
 #include <reg.h>
 
+/* start address for the initialization values of the .data section.
+ * defined in linker script */
+extern uint32_t _sidata;
+/* start address for the .data section. defined in linker script */
+extern uint32_t _sdata;
+/* end address for the .data section. defined in linker script */
+extern uint32_t _edata;
+/* start address for the .bss section. defined in linker script */
+extern uint32_t _sbss;
+/* end address for the .bss section. defined in linker script */
+extern uint32_t _ebss;
+/* end address for the stack. defined in linker script */
+extern uint32_t _estack;
+
+
+
 void arch_init(void);
 static inline unsigned long interrupt_disable(void)
 {
@@ -47,7 +63,7 @@ static inline void arch_context_switch(void)
     *SCB_ICSR |= SCB_ICSR_PENDSVSET;
 }
 
-struct interrupt_contex {
+struct interrupt_context {
     uint32_t r4;
     uint32_t r5;
     uint32_t r6;
@@ -70,22 +86,7 @@ struct arch_context{
     unsigned long sp;
 };
 
-static inline int atomic_add_return(int v, volatile int *ptr)
-{
-	int retval = v;
-    asm volatile("retry:ldrex r4, %1\n" 
-	             "add r4,r4,%2\n"
-                 "strex r5,r4,%0\n"
-                 "cmp r5,#0\n"
-                 "ite eq\n"
-                 "streq r4,%0\n"
-                 "bne retry\n"
-                 : "=m"(*ptr)
-                 : "m"(*ptr),"r"(retval)
-                 : "r4","r5");
-	return retval;
-}
-
+static int atomic_add_return(int v, volatile int *ptr);
 void _start(void);
 
 #endif

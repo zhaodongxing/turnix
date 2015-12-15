@@ -1,5 +1,5 @@
 KERNEL := turnix
-CFLAGS += -Wall -Werror -Wextra -O2 -nostdlib -nostdinc -fno-builtin \
+CFLAGS += -Wall -Wextra -O2 -nostdlib -nostdinc -fno-builtin \
 	  -fno-stack-protector -nostartfiles -nodefaultlibs -std=gnu99 \
 	  -Iinclude -ffreestanding
 ARCH ?= arm

@@ -72,5 +72,6 @@ static void philosophers_init(void)
 		pthread_detach(tid);
 		pthread_attr_destroy(&attr);
 	}
+    printf("philosophers init success\n");
 }
 application_init(philosophers_init);

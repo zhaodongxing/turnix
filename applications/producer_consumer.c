@@ -93,5 +93,6 @@ static void producer_consumer_init(void)
 	pthread_setname_np(tid, "consumer");
 	pthread_detach(tid);
 	pthread_attr_destroy(&attr);
+    printf("producer consumer init success\n");
 }
 application_init(producer_consumer_init);

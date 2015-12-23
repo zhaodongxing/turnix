@@ -16,7 +16,7 @@ STRIP := ${CROSS_COMPILE}strip
 GDB := gdb
 SHELL := /bin/bash
 QEMU ?= qemu-system-${ARCH}
-APPLICATION ?= applications/shell.o
+APPLICATION ?= applications/producer_consumer.o
 export SHELLOPTS := errexit:pipefail
 
 include Config.mk
@@ -68,7 +68,7 @@ include/config.h: Config.mk
 -include $(DEPS)
 
 qemu: ${KERNEL}.elf
-	$(QEMU) -m 16M -kernel ${KERNEL}.elf
+	qemu-system-arm -M stm32-p103 -nographic -kernel ${KERNEL}.bin
 
 dump: ${KERNEL}.elf
 	$(OBJDUMP) -d ${KERNEL}.elf | less

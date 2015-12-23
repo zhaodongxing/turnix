@@ -33,3 +33,6 @@ int putchar(int c)
     return 0;
 }
 
+int getchar(void){
+    return 0;
+}

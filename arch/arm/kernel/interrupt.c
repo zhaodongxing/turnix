@@ -6,15 +6,12 @@
 
 
 extern pthread_t pthread_next;
-/* FIXME: Without naked attribute, GCC will corrupt r7 which is used for stack
- * pointer. If so, after restoring the tasks' context, we will get wrong stack
- * pointer.
- */
 void __attribute__((naked)) pendsv_handler()
 {
+    printf("enter pendsv handler\n");
     asm volatile("cpsid i\n");
     asm volatile("mrs   r0, psp\n"
-                 "stmdb r0!, {r4-r11, lr}\n");
+                 "stmdb r0!, {r4-r11}\n");
     asm volatile("str  r0,%0\n" : "=m"(pthread_current));
 
     asm volatile("ldr r0, %0\n" : : "m" (pthread_next));

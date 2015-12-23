@@ -32,10 +32,11 @@
 
 void arch_early_init(void)
 {
+    rcc_clock_init();
     usart_init();
 }
 
-static int atomic_add_return(int v, volatile int *ptr)
+int atomic_add_return(int v, volatile int *ptr)
 {
 	int retval = v;
     asm volatile("again: ldrex r4, %1\n" 
@@ -62,7 +63,6 @@ void switch_to_thread_mode(void){
 
 void arch_init(void)
 {
-    rcc_clock_init();
 }
 
 void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
@@ -78,4 +78,8 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
     ctx->pc = (unsigned long)start_routine;
 	ctx->psr = (unsigned long)PSR_THUMB;
 	th->context.sp = (unsigned long)ctx;
+}
+
+void reboot(void){
+    *SCB_AIRCR|=0x4;
 }

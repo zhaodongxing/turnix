@@ -1,4 +1,4 @@
-ENTRY(reset_handler)
+ENTRY(_start)
 
 MEMORY
 {
@@ -13,6 +13,12 @@ SECTIONS
 		KEEP(*(.isr_vector))
 		*(.text)
 		*(.text.*)
+        application_init_begin = .;
+		KEEP(*(.application.init))
+		application_init_end = .;
+		shell_cmd_begin = .;
+		KEEP(*(.shell.cmd))
+		shell_cmd_end = .;
 		*(.rodata)
 		*(.rodata.*)
 		_sromdev = .;
@@ -24,7 +30,8 @@ SECTIONS
 	{
 		_sdata = .;
 		*(.data)
-		*(.data*)
+        *(.shell.cmd)
+        *(.data.idle)
 		_edata = .;
 	} >RAM
 
@@ -36,4 +43,5 @@ SECTIONS
 	} >RAM
 
 	_estack = ORIGIN(RAM) + LENGTH(RAM);
+	kernel_end = .;
 }

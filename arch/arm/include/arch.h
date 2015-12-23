@@ -41,9 +41,12 @@ extern uint32_t _ebss;
 /* end address for the stack. defined in linker script */
 extern uint32_t _estack;
 
-
-
 void arch_init(void);
+
+static inline void arch_enable_interrupt(void)
+{
+}
+
 static inline unsigned long interrupt_disable(void)
 {
     unsigned long flags;
@@ -62,6 +65,11 @@ static inline void arch_context_switch(void)
 {
     *SCB_ICSR |= SCB_ICSR_PENDSVSET;
 }
+
+static inline void arch_halt(void)
+{
+}
+
 
 struct interrupt_context {
     uint32_t r4;
@@ -86,7 +94,7 @@ struct arch_context{
     unsigned long sp;
 };
 
-static int atomic_add_return(int v, volatile int *ptr);
+int atomic_add_return(int v, volatile int *ptr);
 void _start(void);
 
 #endif

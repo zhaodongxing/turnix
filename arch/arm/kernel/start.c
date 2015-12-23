@@ -13,8 +13,6 @@ void _start(void)
 	uint32_t *bss_end = &_ebss;
 	while (bss_begin < bss_end) *bss_begin++ = 0;
 
-    arch_init();
-
 	main();
 }
 

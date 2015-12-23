@@ -34,13 +34,17 @@
 extern init_func_t * const application_init_begin[];
 extern init_func_t * const application_init_end[];
 extern unsigned int kernel_end;
+static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[25];
 
+//int main(struct multiboot_info *info)
 int main(struct multiboot_info *info)
 {
 	init_func_t * const *func;
 
 	arch_early_init();
+	printf("arch_early_init\n");
 
+    /*
 	if ((info->flags & 1) == 0) {
 		printf("no memory info\n");
 		abort();
@@ -54,9 +58,11 @@ int main(struct multiboot_info *info)
 	printf("  heap:  %08x - %08x\n", (uint32_t)&kernel_end,
 	       info->mem_upper);
 
+           */
 	arch_init();
 	pthread_init();
 
+	printf("pthread_init\n");
 	in_irq = 1;
 	for (func = application_init_begin; func < application_init_end;
 	     ++func) {
@@ -65,7 +71,12 @@ int main(struct multiboot_info *info)
 	in_irq = 0;
 
 	arch_enable_interrupt();
+	printf("arch_enable_interrupt\n");
+    asm volatile("msr psp,%0\n" : :"r"(_edata));
+    asm volatile("msr control,%0": :"r"(0x2));
+    
 	pthread_yield();
+	printf("yield return\n");
 
 	for (;;)
 		arch_halt();

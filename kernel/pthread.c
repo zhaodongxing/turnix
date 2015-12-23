@@ -164,6 +164,7 @@ void __schedule(void)
 void schedule(void)
 {
 	unsigned long flags;
+    printf("try to schedule\n");
 
 	if (in_irq) {
 		pthread_next = NULL;

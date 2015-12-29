@@ -71,12 +71,15 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 	unsigned long *stack;
 	struct interrupt_context *ctx;
 
-	stack = (unsigned long *)((char *)th->stack_addr + th->stack_size);
-	ctx = (struct interrupt_context *)(stack - 1) - 1;
+	stack = (unsigned long *)(th->stack_addr + th->stack_size);
+	ctx = (struct interrupt_context *)(stack) - 1;
+    ctx->r4 = (unsigned long)(0x5a5a5a5a);
+    ctx->r6 = (unsigned long)(0x6a6a5a5a);
 	ctx->r0 = (unsigned long)(arg);
-    ctx->ip = (unsigned long)abort;
+    ctx->lr = (unsigned long)abort;
     ctx->pc = (unsigned long)start_routine;
 	ctx->psr = (unsigned long)PSR_THUMB;
+    printf("ctx addr is %x start %x\n",ctx,ctx->pc);
 	th->context.sp = (unsigned long)ctx;
 }
 

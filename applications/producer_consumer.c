@@ -37,6 +37,7 @@ static uint32_t *pcount;
 static void *producer(void *args)
 {
 	uint32_t count = 0;
+    printf("producer enter\n");
 
 	(void)args;
 	for (;;) {
@@ -73,6 +74,7 @@ static void *consumer(void *args)
 
 static void producer_consumer_init(void)
 {
+    printf("producer consumer start\n");
 	pthread_attr_t attr;
 	pthread_t tid;
 
@@ -80,9 +82,12 @@ static void producer_consumer_init(void)
 	pthread_cond_init(&cond_empty, NULL);
 	pthread_cond_init(&cond_full, NULL);
 
+    printf("producer consumer 1\n");
 	pthread_attr_init(&attr);
 	pthread_attr_setstack(&attr, stack_producer, sizeof(stack_producer));
+    printf("producer consumer 2\n");
 	pthread_create(&tid, &attr, producer, NULL);
+    printf("producer consumer 3\n");
 	pthread_setname_np(tid, "producer");
 	pthread_detach(tid);
 	pthread_attr_destroy(&attr);
@@ -93,6 +98,6 @@ static void producer_consumer_init(void)
 	pthread_setname_np(tid, "consumer");
 	pthread_detach(tid);
 	pthread_attr_destroy(&attr);
-    printf("producer consumer init success\n");
+    printf("producer consumer init end\n");
 }
 application_init(producer_consumer_init);

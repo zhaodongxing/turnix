@@ -8,18 +8,26 @@
 extern pthread_t pthread_next;
 void __attribute__((naked)) pendsv_handler()
 {
+    uint32_t flags;
     printf("enter pendsv handler\n");
     asm volatile("cpsid i\n");
+	__schedule();
     asm volatile("mrs   r0, psp\n"
                  "stmdb r0!, {r4-r11}\n");
-    asm volatile("str  r0,%0\n" : "=m"(pthread_current));
+    asm volatile("mov r1,%0\n" : :"r"(pthread_current));
+    asm volatile("str  r0,[r1]\n");
 
-    asm volatile("ldr r0, %0\n" : : "m" (pthread_next));
-    asm volatile("ldmia r0!, {r4-r11}\n"
-                 "msr psp, r0\n"
-                 "orr lr,lr,0x04\n"
+    asm volatile("mov r0, %0\n" : : "r" (pthread_next));
+    asm volatile("ldr r1, [r0]\n");
+    asm volatile("ldmia r1!, {r4-r11}\n");
+    asm volatile("mov %0, r6\n" : "=r" (flags));
+    printf("r5 is %x\n",flags);
+    asm volatile("msr psp, r1\n");
+
+    asm volatile("orr lr,lr,0x04\n"
                  "cpsie i\n"
-                 "bx lr\n");
+                 "bx lr");
+                         
 }
 
 

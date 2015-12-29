@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 #include <reg.h>
+#include <arch.h>
+#include <stdio.h>
 
 /* start address for the initialization values of the .data section.
  * defined in linker script */
@@ -43,8 +45,17 @@ extern uint32_t _estack;
 
 void arch_init(void);
 
+static inline void arch_disable_interrupt(void)
+{
+    uint32_t flags;
+    asm volatile("cpsid i\n");
+    asm volatile("mrs %0,control":"=r"(flags));
+    printf("init%x\n",flags);
+}
+
 static inline void arch_enable_interrupt(void)
 {
+    asm volatile("cpsie i\n");
 }
 
 static inline unsigned long interrupt_disable(void)

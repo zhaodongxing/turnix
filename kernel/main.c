@@ -59,22 +59,24 @@ int main(struct multiboot_info *info)
 	       info->mem_upper);
 
            */
+
 	arch_init();
 	pthread_init();
 
 	printf("pthread_init\n");
+    asm volatile("msr psp,%0\n" : :"r"(_edata));
+    asm volatile("msr control,%0": :"r"(0x02));
+
+	arch_disable_interrupt();
 	in_irq = 1;
 	for (func = application_init_begin; func < application_init_end;
 	     ++func) {
 		(**func)();
 	}
 	in_irq = 0;
-
 	arch_enable_interrupt();
+
 	printf("arch_enable_interrupt\n");
-    asm volatile("msr psp,%0\n" : :"r"(_edata));
-    asm volatile("msr control,%0": :"r"(0x2));
-    
 	pthread_yield();
 	printf("yield return\n");
 

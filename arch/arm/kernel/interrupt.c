@@ -6,24 +6,25 @@
 
 
 extern pthread_t pthread_next;
+/*interrupt use msp*/
 void __attribute__((naked)) pendsv_handler()
 {
-    asm volatile("cpsid i\n");
-    asm volatile("mrs   r0, psp\n"
-                 "stmdb r0!, {r4-r11}\n");
-    asm volatile("mov r1,%0\n" : :"r"(pthread_current));
-    asm volatile("str r0,[r1]\n");
+    asm volatile("cpsid i\n"
+                 "mrs   r0, psp\n"
+                 "stmdb r0!, {r4-r11}\n"
+                 "mov r1,%0\n"
+                 "str r0,[r1]\n": :"r"(pthread_current));
     asm volatile("push {lr}\n");
 	__schedule();
     asm volatile("pop {lr}\n");
     pthread_current = pthread_next;
-    asm volatile("mov r0, %0\n" : : "r" (pthread_current));
-    asm volatile("ldr r1, [r0]\n");
-    asm volatile("ldmia r1!, {r4-r11}\n");
-    asm volatile("msr psp, r1\n");
-    asm volatile("orr lr,lr,0x04\n"
+    asm volatile("mov r0, %0\n"
+                 "ldr r1, [r0]\n"
+                 "ldmia r1!, {r4-r11}\n"
+                 "msr psp, r1\n"
+                 "orr lr,lr,0x04\n"
                  "cpsie i\n"
-                 "bx lr");
+                 "bx lr": :"r"(pthread_current));
 }
 
 
@@ -44,7 +45,7 @@ void timer_update(void) __attribute((weak, alias("default_handler")));
 __attribute((section(".isr_vector")))
 uint32_t *isr_vectors[] = {
 	[0x00] = (uint32_t *) &_estack,			/* stack pointer */
-	[0x01] = (uint32_t *) _start,		/* code entry point */
+	[0x01] = (uint32_t *) __start,		/* code entry point */
 	[0x02] = (uint32_t *) nmi_handler,		/* NMI handler */
 	[0x03] = (uint32_t *) hardfault_handler,	/* hard fault handler */
 	[0x04] = (uint32_t *) memmanage_handler,	/* mem manage handler */

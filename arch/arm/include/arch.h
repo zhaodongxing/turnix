@@ -106,7 +106,7 @@ struct arch_context{
 };
 
 int atomic_add_return(int v, volatile int *ptr);
-void _start(void);
+void __start(void);
 
 #endif
 

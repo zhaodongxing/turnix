@@ -30,6 +30,22 @@
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)
 
+void __start(void)
+{
+	/* Copy the data segment initializers from flash to SRAM */
+	uint32_t *idata_begin = &_sidata;
+	uint32_t *data_begin = &_sdata;
+	uint32_t *data_end = &_edata;
+	while (data_begin < data_end) *data_begin++ = *idata_begin++;
+
+	/* Zero fill the bss segment. */
+	uint32_t *bss_begin = &_sbss;
+	uint32_t *bss_end = &_ebss;
+	while (bss_begin < bss_end) *bss_begin++ = 0;
+
+	main();
+}
+
 void arch_early_init(void)
 {
     rcc_clock_init();
@@ -52,38 +68,34 @@ int atomic_add_return(int v, volatile int *ptr)
 }
 
 
-void switch_to_thread_mode(void){
-    /* Save kernel context */
-    asm volatile("mrs ip, psr\n"
-                 "push {r4-r11, ip, lr}\n");
-
-
-}
-
 void arch_init(void)
 {
+    /*start to use psp*/
+    asm volatile("msr psp,%0\n"
+                 "mov r1,0x02\n"
+                 "msr control,r1\n": :"r"(_edata));
 }
 
 void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 		               void *(*start_routine)(void *), void *arg)
 {
-	unsigned long *stack;
+	uint32_t *stack;
 	struct interrupt_context *ctx;
 
-	stack = (unsigned long *)(th->stack_addr + th->stack_size);
+	stack = (uint32_t *)(th->stack_addr + th->stack_size);
 	ctx = (struct interrupt_context *)(stack) - 1;
-	ctx->r0 = (unsigned long)(arg);
-	ctx->r1 = (unsigned long)(0x01010101);
-	ctx->r2 = (unsigned long)(0x02020202);
-	ctx->r3 = (unsigned long)(0x03030303);
-    ctx->r4 = (unsigned long)(0x04040404);
-    ctx->r5 = (unsigned long)(0x05050505);
-    ctx->r6 = (unsigned long)(0x06060606);
-    ctx->lr = (unsigned long)abort;
-    ctx->pc = (unsigned long)start_routine;
-	ctx->psr = (unsigned long)PSR_THUMB;
+	ctx->r0 = (uint32_t)(arg);
+	ctx->r1 = (uint32_t)(0x01010101);
+	ctx->r2 = (uint32_t)(0x02020202);
+	ctx->r3 = (uint32_t)(0x03030303);
+    ctx->r4 = (uint32_t)(0x04040404);
+    ctx->r5 = (uint32_t)(0x05050505);
+    ctx->r6 = (uint32_t)(0x06060606);
+    ctx->lr = (uint32_t)abort;
+    ctx->pc = (uint32_t)start_routine;
+	ctx->psr = (uint32_t)PSR_THUMB;
     printf("ctx addr is %x start %x\n",ctx,ctx->pc);
-	th->context.sp = (unsigned long)ctx;
+	th->context.sp = (uint32_t)ctx;
 }
 
 void reboot(void){

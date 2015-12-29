@@ -42,7 +42,6 @@ int main(struct multiboot_info *info)
 	init_func_t * const *func;
 
 	arch_early_init();
-	printf("arch_early_init\n");
 
     /*
 	if ((info->flags & 1) == 0) {
@@ -58,13 +57,10 @@ int main(struct multiboot_info *info)
 	printf("  heap:  %08x - %08x\n", (uint32_t)&kernel_end,
 	       info->mem_upper);
 
-           */
+     */
 
 	arch_init();
 	pthread_init();
-
-    asm volatile("msr psp,%0\n" : :"r"(_edata));
-    asm volatile("msr control,%0": :"r"(0x02));
 
 	arch_disable_interrupt();
 	in_irq = 0;

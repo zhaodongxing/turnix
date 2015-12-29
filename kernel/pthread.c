@@ -164,7 +164,6 @@ void __schedule(void)
 void schedule(void)
 {
 	arch_context_switch();
-    printf("try to schedule\n");
 }
 
 static void __pthread_set_running(pthread_t th)
@@ -292,7 +291,6 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
 	unsigned int i;
 	unsigned long flags;
 	pthread_t th;
-    printf("pthread create 1\n");
 
 	flags = interrupt_disable();
 	for (i = 0; i < ARRAY_SIZE(pthreads); ++i) {
@@ -302,7 +300,6 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
 		}
 	}
 	interrupt_enable(flags);
-    printf("pthread create 2\n");
 	if (i == ARRAY_SIZE(pthreads))
 		return EAGAIN;
 	th = &pthreads[i];
@@ -320,9 +317,7 @@ int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
 	th->error_code = 0;
 	th->ticks = 0;
 	arch_pthread_init(th, __start_routine, start_routine, arg);
-    printf("pthread create 3\n");
 	wake_up(th);
-    printf("pthread create 4\n");
 	*thread = th;
 
 	return 0;

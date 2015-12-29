@@ -37,7 +37,6 @@ static uint32_t *pcount;
 static void *producer(void *args)
 {
 	uint32_t count = 0;
-    printf("producer enter\n");
 
 	(void)args;
 	for (;;) {

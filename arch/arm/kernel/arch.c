@@ -38,7 +38,6 @@ void arch_early_init(void)
 
 int atomic_add_return(int v, volatile int *ptr)
 {
-	int retval = v;
     asm volatile("again: ldrex r4, %1\n" 
 	             "add r4,r4,%2\n"
                  "strex r5,r4,%0\n"
@@ -47,9 +46,9 @@ int atomic_add_return(int v, volatile int *ptr)
                  "streq r4,%0\n"
                  "bne again\n"
                  : "=m"(*ptr)
-                 : "m"(*ptr),"r"(retval)
+                 : "m"(*ptr),"r"(v)
                  : "r4","r5");
-	return retval;
+	return 0;
 }
 
 
@@ -73,9 +72,13 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 
 	stack = (unsigned long *)(th->stack_addr + th->stack_size);
 	ctx = (struct interrupt_context *)(stack) - 1;
-    ctx->r4 = (unsigned long)(0x5a5a5a5a);
-    ctx->r6 = (unsigned long)(0x6a6a5a5a);
 	ctx->r0 = (unsigned long)(arg);
+	ctx->r1 = (unsigned long)(0x01010101);
+	ctx->r2 = (unsigned long)(0x02020202);
+	ctx->r3 = (unsigned long)(0x03030303);
+    ctx->r4 = (unsigned long)(0x04040404);
+    ctx->r5 = (unsigned long)(0x05050505);
+    ctx->r6 = (unsigned long)(0x06060606);
     ctx->lr = (unsigned long)abort;
     ctx->pc = (unsigned long)start_routine;
 	ctx->psr = (unsigned long)PSR_THUMB;

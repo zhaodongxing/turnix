@@ -34,7 +34,6 @@
 extern init_func_t * const application_init_begin[];
 extern init_func_t * const application_init_end[];
 extern unsigned int kernel_end;
-static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[25];
 
 //int main(struct multiboot_info *info)
 int main(struct multiboot_info *info)

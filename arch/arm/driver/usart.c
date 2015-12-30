@@ -36,3 +36,30 @@ int putchar(int c)
 int getchar(void){
     return 0;
 }
+
+#if 0
+void USART2_IRQHandler()  
+{
+    if(USART_GetITStatus(USART2,USART_IT_RXNE) != RESET) 
+    {  
+       USART_ClearITPendingBit(USART2,USART_IT_RXNE);
+       Uart2_Buffer[Uart2_Rx] = USART_ReceiveData(USART2);  
+       Uart2_Rx++;  
+       Uart2_Rx &= 0x3F;
+    }  
+
+    if(USART_GetFlagStatus(USART2,USART_FLAG_ORE) == SET)
+    {  
+        USART_ClearFlag(USART2,USART_FLAG_ORE); 
+        USART_ReceiveData(USART2); 
+    }  
+} 
+
+
+if( Uart2_Tx != Uart2_Rx )  
+{  
+    USART2_SendByte(Uart2_Buffer[Uart2_Tx]); 
+    Uart2_Tx++;  
+    Uart2_Tx &= 0x3F; 
+} 
+#endif

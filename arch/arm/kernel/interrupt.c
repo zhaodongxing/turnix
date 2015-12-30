@@ -2,10 +2,17 @@
 #include <arch.h>
 #include <kernel.h>
 #include <errno.h>
+#include <NVIC.h>
 #include "pthread.h"
 
-
 extern pthread_t pthread_next;
+
+void interrupt_init(void){
+    /*init interrupt priority group config
+     * 8 group priority 2 sub priority */
+    *SCB_AIRCR=(*SCB_AIRCR&0xffffff8f)|(0x4<<8);
+}
+
 /*interrupt use msp*/
 void __attribute__((naked)) pendsv_handler()
 {
@@ -43,17 +50,14 @@ void systick_handler(void) __attribute((weak, alias("default_handler")));
 void timer_update(void) __attribute((weak, alias("default_handler")));
 
 __attribute((section(".isr_vector")))
-uint32_t *isr_vectors[] = {
-	[0x00] = (uint32_t *) &_estack,			/* stack pointer */
-	[0x01] = (uint32_t *) __start,		/* code entry point */
-	[0x02] = (uint32_t *) nmi_handler,		/* NMI handler */
-	[0x03] = (uint32_t *) hardfault_handler,	/* hard fault handler */
-	[0x04] = (uint32_t *) memmanage_handler,	/* mem manage handler */
-	[0x05] = (uint32_t *) busfault_handler,		/* bus fault handler */
-	[0x06] = (uint32_t *) usagefault_handler,	/* usage fault handler */
-	[0x0B] = (uint32_t *) svc_handler,		/* svc handler */
-	[0x0E] = (uint32_t *) pendsv_handler,		/* pendsv handler */
-	[0x0F] = (uint32_t *) timer_update		/* systick handler */
+struct NVIC_table isr = {
+    .stack     = (uint32_t)&_estack,
+    .Reset     = (uint32_t)__start,
+    .NMI       = (uint32_t)nmi_handler,
+    .HardFault = (uint32_t)hardfault_handler,
+    .MemManage = (uint32_t)memmanage_handler,
+    .PendSV    = (uint32_t)pendsv_handler,
+    .SysTick   = (uint32_t)timer_update,
 };
 
 

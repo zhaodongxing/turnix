@@ -4,7 +4,7 @@ CROSS_COMPILE = arm-none-eabi-
 ASMOBJS += 
 COBJS += arch/arm/kernel/interrupt.o arch/arm/kernel/arch.o \
 	 arch/arm/driver/timer.o arch/arm/driver/usart.o  \
-     arch/arm/driver/rcc_clock.o 
+     arch/arm/driver/rcc.o 
 OUTPUT := ${KERNEL}.bin
 ${KERNEL}.bin: ${KERNEL}.elf
 	$(CROSS_COMPILE)objcopy -Obinary ${KERNEL}.elf ${KERNEL}.bin

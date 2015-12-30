@@ -26,6 +26,7 @@
 #include <pthread.h>
 #include <kernel.h>
 #include <hw_init.h>
+static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[25];
 
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)
@@ -49,7 +50,9 @@ void __start(void)
 void arch_early_init(void)
 {
     rcc_clock_init();
+    interrupt_init();
     usart_init();
+
 }
 
 int atomic_add_return(int v, volatile int *ptr)
@@ -94,7 +97,6 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
     ctx->lr = (uint32_t)abort;
     ctx->pc = (uint32_t)start_routine;
 	ctx->psr = (uint32_t)PSR_THUMB;
-    printf("ctx addr is %x start %x\n",ctx,ctx->pc);
 	th->context.sp = (uint32_t)ctx;
 }
 

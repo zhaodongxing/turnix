@@ -136,6 +136,7 @@ static __shell_cmd struct shell_cmd cmd_exit = {
 
 static int do_help(int argc, char *argv[])
 {
+    printf("enter help\n");
 	if (argc == 1) {
 		return cmd_list();
 	} else {

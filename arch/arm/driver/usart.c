@@ -7,6 +7,7 @@
  * set when that data is transferred to the TDR
  */
 #define USART_FLAG_TXE  ((uint16_t) 0x0080)
+#define USART_FLAG_RXNE ((uint16_t) 0x0020)
 
 void usart_init(void)
 {
@@ -34,7 +35,8 @@ int putchar(int c)
 }
 
 int getchar(void){
-    return 0;
+    while(!(*(USART2_SR) & USART_FLAG_RXNE));
+    return *(USART2_DR);
 }
 
 #if 0

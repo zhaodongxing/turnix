@@ -3,6 +3,7 @@
 #include <kernel.h>
 #include <errno.h>
 #include <NVIC.h>
+#include <timer.h>
 #include "pthread.h"
 
 extern pthread_t pthread_next;
@@ -46,8 +47,7 @@ void memmanage_handler(void) __attribute((weak, alias("default_handler")));
 void busfault_handler(void) __attribute((weak, alias("default_handler")));
 void usagefault_handler(void) __attribute((weak, alias("default_handler")));
 void svc_handler(void) __attribute((weak, alias("default_handler")));
-void systick_handler(void) __attribute((weak, alias("default_handler")));
-void timer_update(void) __attribute((weak, alias("default_handler")));
+
 
 __attribute((section(".isr_vector")))
 struct NVIC_table isr = {

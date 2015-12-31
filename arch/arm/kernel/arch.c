@@ -52,7 +52,7 @@ void arch_early_init(void)
     rcc_clock_init();
     interrupt_init();
     usart_init();
-
+    timer_init();
 }
 
 int atomic_add_return(int v, volatile int *ptr)
@@ -87,15 +87,15 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 
 	stack = (uint32_t *)(th->stack_addr + th->stack_size);
 	ctx = (struct interrupt_context *)(stack) - 1;
-	ctx->r0 = (uint32_t)(arg);
-	ctx->r1 = (uint32_t)(0x01010101);
+	ctx->r0 = (uint32_t)(start_routine);
+	ctx->r1 = (uint32_t)arg;
 	ctx->r2 = (uint32_t)(0x02020202);
 	ctx->r3 = (uint32_t)(0x03030303);
     ctx->r4 = (uint32_t)(0x04040404);
     ctx->r5 = (uint32_t)(0x05050505);
     ctx->r6 = (uint32_t)(0x06060606);
     ctx->lr = (uint32_t)abort;
-    ctx->pc = (uint32_t)start_routine;
+    ctx->pc = (uint32_t)wrapper;
 	ctx->psr = (uint32_t)PSR_THUMB;
 	th->context.sp = (uint32_t)ctx;
 }

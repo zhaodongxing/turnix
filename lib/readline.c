@@ -49,7 +49,7 @@ char *readline(const char *prompt)
 			break;
 		case '\t':
 			break;
-		case '\n':
+		case '\r':
 			putchar(c);
 			goto out;
 		default:
@@ -58,6 +58,7 @@ char *readline(const char *prompt)
 		}
 	}
 out:
+    printf("out\n");
 	readline_buffer[n] = '\0';
 
 	return (char *)readline_buffer;

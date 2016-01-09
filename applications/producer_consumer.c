@@ -65,7 +65,7 @@ static void *consumer(void *args)
 		pcount = NULL;
 		pthread_cond_signal(&cond_full);
 		pthread_mutex_unlock(&mutex);
-		printf("%u\n", count);
+		//printf("%u\n", count);
 	}
 
 	return NULL;
@@ -73,6 +73,7 @@ static void *consumer(void *args)
 
 static void producer_consumer_init(void)
 {
+
 	pthread_attr_t attr;
 	pthread_t tid;
 

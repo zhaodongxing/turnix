@@ -41,6 +41,9 @@
 #define CONFIG_TIMESLICE 10
 #endif
 
+pthread_t pthread_current;
+pthread_t pthread_next;
+
 static struct pthread pthreads[CONFIG_PTHREAD_MAX_NUM];
 
 static struct pthread pthread_idle;
@@ -125,8 +128,6 @@ int pthread_setschedprio(pthread_t thread, int priority)
 	return 0;
 }
 
-pthread_t pthread_current;
-pthread_t pthread_next;
 
 void pthread_init(void)
 {

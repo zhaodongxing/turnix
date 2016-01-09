@@ -43,12 +43,12 @@ void __start(void)
 	uint32_t *bss_begin = &_sbss;
 	uint32_t *bss_end = &_ebss;
 	while (bss_begin < bss_end) *bss_begin++ = 0;
-
 	main();
 }
 
 void arch_early_init(void)
 {
+    led_init();
     rcc_clock_init();
     interrupt_init();
     usart_init();

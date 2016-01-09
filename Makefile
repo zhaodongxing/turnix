@@ -1,5 +1,5 @@
 KERNEL := turnix
-CFLAGS += -Wall -Wextra -O2 -nostdlib -nostdinc -fno-builtin \
+CFLAGS += -Wall -Wextra -nostdlib -nostdinc -fno-builtin \
 	  -fno-stack-protector -nostartfiles -nodefaultlibs -std=gnu99 \
 	  -Iinclude -ffreestanding
 ARCH ?= arm
@@ -16,17 +16,10 @@ STRIP := ${CROSS_COMPILE}strip
 GDB := gdb
 SHELL := /bin/bash
 QEMU ?= qemu-system-${ARCH}
-APPLICATION ?= applications/shell.o
+APPLICATION ?= applications/producer_consumer.o
 export SHELLOPTS := errexit:pipefail
 
 include Config.mk
-
-ifeq (${CONFIG_DEBUG},1)
-	CFLAGS += -g
-else
-	CFLAGS += -fdata-sections -ffunction-sections -DNDEBUG
-	LDFLAGS += --gc-sections --print-gc-sections
-endif
 
 COBJS += kernel/main.o lib/string.o lib/stdio.o lib/stdlib.o \
 	 kernel/interrupt.o lib/hexdump.o kernel/timer.o lib/circular_buffer.o \

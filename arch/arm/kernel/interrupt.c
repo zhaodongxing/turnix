@@ -6,12 +6,15 @@
 #include <timer.h>
 #include "pthread.h"
 
+
 extern pthread_t pthread_next;
 
 void interrupt_init(void){
     /*init interrupt priority group config
      * 8 group priority 2 sub priority */
     *SCB_AIRCR=(*SCB_AIRCR&0xffffff8f)|(0x4<<8);
+    *SCB_SHPR3=(uint32_t)0xFEFF0000;
+    
 }
 
 /*interrupt use msp*/
@@ -38,6 +41,7 @@ void __attribute__((naked)) pendsv_handler()
 
 void default_handler(void)
 {
+//    led_on();
 	while (1);
 }
 

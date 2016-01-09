@@ -50,7 +50,6 @@ static inline void arch_disable_interrupt(void)
     uint32_t flags;
     asm volatile("cpsid i\n");
     asm volatile("mrs %0,control":"=r"(flags));
-    printf("init%x\n",flags);
 }
 
 static inline void arch_enable_interrupt(void)
@@ -108,6 +107,9 @@ struct arch_context{
 int atomic_add_return(int v, volatile int *ptr);
 void __start(void);
 void interrupt_init();
+void led_init();
+void led_on();
+void led_off();
 
 #endif
 

@@ -60,9 +60,9 @@ int main(struct multiboot_info *info)
 
 	arch_init();
 	pthread_init();
-
 	arch_disable_interrupt();
-	in_irq = 0;
+
+	in_irq = 1;
 	for (func = application_init_begin; func < application_init_end;
 	     ++func) {
 		(**func)();

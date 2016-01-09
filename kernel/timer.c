@@ -220,6 +220,7 @@ static void update_timeval(struct timeval *tv)
 
 void timer_update(void)
 {
+ 
 	unsigned long now = ++ticks;
 
 	update_timeval(&wall_clock.tv);

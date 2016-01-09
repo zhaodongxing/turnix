@@ -1,6 +1,7 @@
 #include <reg.h>
+#include <arch.h>
 /* 72MHz */
-#define CPU_CLOCK_HZ 72000000
+#define CPU_CLOCK_HZ 8000000
 
 /* 100 ms per tick. */
 #define TICK_RATE_HZ 10

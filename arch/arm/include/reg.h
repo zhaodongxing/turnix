@@ -72,8 +72,6 @@
 #define SYSTICK_VAL	((__REG) (SYSTICK_MMAP + 0x08))
 #define SYSTICK_CALIB	((__REG) (SYSTICK_MMAP + 0x0C))
 
-
-
 struct NVIC_reg{
     uint32_t  ISER[3];
     uint32_t  ICER[3];

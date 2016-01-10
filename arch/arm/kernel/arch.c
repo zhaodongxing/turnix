@@ -26,7 +26,7 @@
 #include <pthread.h>
 #include <kernel.h>
 #include <hw_init.h>
-static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[25];
+static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[64];
 
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)

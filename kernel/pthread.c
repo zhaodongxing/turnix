@@ -407,6 +407,8 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 		pthread_self()->state = PTHREAD_STATE_SLEEPING;
 		schedule();
 	}
+	interrupt_enable(flags);
+	flags = interrupt_disable();
 	TAILQ_REMOVE(&mutex->wq, &w, link);
 	if (TAILQ_EMPTY(&mutex->wq))
 		mutex->lock = 0;
@@ -523,6 +525,8 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
 	} else {
 		schedule();
 	}
+	interrupt_enable(flags);
+	flags = interrupt_disable();
 	pthread_mutex_lock(mutex);
 	if (!TAILQ_ENTRY_EMPTY(&w.link))
 		TAILQ_REMOVE(&cond->wq, &w, link);

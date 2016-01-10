@@ -1,7 +1,7 @@
 KERNEL := turnix
 CFLAGS += -Wall -Wextra -nostdlib -nostdinc -fno-builtin \
 	  -fno-stack-protector -nostartfiles -nodefaultlibs -std=gnu99 \
-	  -Iinclude -ffreestanding
+	  -Iinclude -ffreestanding -g
 ARCH ?= arm
 include arch/${ARCH}/Makefile
 LDFLAGS += -T ${LINK_SCRIPT}

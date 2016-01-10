@@ -47,6 +47,9 @@ static void *producer(void *args)
 		pthread_cond_signal(&cond_empty);
 		pthread_mutex_unlock(&mutex);
 		++count;
+        if(count%4000==0){
+            led_on();
+        }
 	}
  
 	return NULL;
@@ -65,6 +68,9 @@ static void *consumer(void *args)
 		pcount = NULL;
 		pthread_cond_signal(&cond_full);
 		pthread_mutex_unlock(&mutex);
+        if(count%4000 == 2000){
+            led_off();
+        }
 		//printf("%u\n", count);
 	}
 

@@ -12,13 +12,13 @@ extern pthread_t pthread_next;
 void interrupt_init(void){
     /*init interrupt priority group config
      * 8 group priority 2 sub priority */
-    *SCB_AIRCR=(*SCB_AIRCR&0xffffff8f)|(0x4<<8);
-    *SCB_SHPR3=(uint32_t)0xFEFF0000;
+    *SCB_AIRCR=(*SCB_AIRCR&0xfffff8ff)|(0x4<<8);
+    *SCB_SHPR3=(uint32_t)0xEFFF0000;
     
 }
 
 /*interrupt use msp*/
-void __attribute__((naked)) pendsv_handler()
+void pendsv_handler(void)
 {
     asm volatile("cpsid i\n"
                  "mrs   r0, psp\n"
@@ -41,12 +41,15 @@ void __attribute__((naked)) pendsv_handler()
 
 void default_handler(void)
 {
-//    led_on();
+	while (1);
+}
+
+void hardfault_handler(void)
+{
 	while (1);
 }
 
 void nmi_handler(void) __attribute((weak, alias("default_handler")));
-void hardfault_handler(void) __attribute((weak, alias("default_handler")));
 void memmanage_handler(void) __attribute((weak, alias("default_handler")));
 void busfault_handler(void) __attribute((weak, alias("default_handler")));
 void usagefault_handler(void) __attribute((weak, alias("default_handler")));

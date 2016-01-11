@@ -29,6 +29,8 @@
 #define RCC_APB1ENR	((__REG) (RCC_MAP + 0x1C))
 #define RCC_BDCR	((__REG) (RCC_MAP + 0x20))
 #define RCC_CSR		((__REG) (RCC_MAP + 0x24))
+#define RCC_CFGR	((__REG) (RCC_MAP + 0x04))
+#define RCC_CFGR2	((__REG) (RCC_MAP + 0x2c))
 
 /* Flash Memory Map */
 #define FLASH_MMAP	((__REG_TYPE) 0x40022000)
@@ -64,6 +66,19 @@
 #define USART2_CR2	((__REG) (USART2_MMAP + 0x10))
 #define USART2_CR3	((__REG) (USART2_MMAP + 0x14))
 #define USART2_GTPR	((__REG) (USART2_MMAP + 0x18))
+
+struct USART_reg{
+    __REG_TYPE SR;
+    __REG_TYPE DR;
+    __REG_TYPE BRR;
+    __REG_TYPE CR1;
+    __REG_TYPE CR2;
+    __REG_TYPE CR3;
+    __REG_TYPE GTPR;
+};
+
+#define pUSART1 ((struct USART_reg*)(0x40013800))
+#define pUSART2 ((struct USART_reg*)(0x40004400))
 
 /* SysTick Memory Map */
 #define SYSTICK_MMAP	((__REG_TYPE) 0xE000E010)

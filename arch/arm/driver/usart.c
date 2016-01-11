@@ -11,20 +11,16 @@
 
 void usart_init(void)
 {
-    *(RCC_APB2ENR) |= (uint32_t) (0x00000001 | 0x00000004);
-    *(RCC_APB1ENR) |= (uint32_t) (0x00020000);
+    *(RCC_APB2ENR) |= (uint32_t) (0x00004005);
 
-    /* USART2 Configuration, Rx->PA3, Tx->PA2 */
-    *(GPIOA_CRL) = 0x00004B00;
-    *(GPIOA_CRH) = 0x44444444;
-    *(GPIOA_ODR) = 0x00000000;
-    *(GPIOA_BSRR) = 0x00000000;
-    *(GPIOA_BRR) = 0x00000000;
+    /* USART1 Configuration, Rx->PA3, Tx->PA2 */
+    *(GPIOA_CRL) = 0x44444444;
+    *(GPIOA_CRH) = 0x000004b0;
 
-    *(USART2_CR1) = 0x0000000C;
-    *(USART2_CR2) = 0x00000000;
-    *(USART2_CR3) = 0x00000000;
-    *(USART2_CR1) |= 0x2000;
+    pUSART2->CR1 = 0x0000000C;
+    pUSART2->CR2 = 0x00000000;
+    pUSART2->CR3 = 0x00000000;
+    pUSART2->CR1 |= 0x2000;
 }
 
 int putchar(int c)

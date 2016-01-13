@@ -16,7 +16,7 @@ STRIP := ${CROSS_COMPILE}strip
 GDB := gdb
 SHELL := /bin/bash
 QEMU ?= qemu-system-${ARCH}
-APPLICATION ?= applications/shell.o
+APPLICATION ?= applications/producer_consumer.o
 export SHELLOPTS := errexit:pipefail
 
 include Config.mk

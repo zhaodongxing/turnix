@@ -25,9 +25,6 @@ void pendsv_handler(void)
                  "stmdb r0!, {r4-r11}\n"
                  "mov r1,%0\n"
                  "str r0,[r1]\n": :"r"(pthread_current));
-    asm volatile("push {lr}\n");
-	__schedule();
-    asm volatile("pop {lr}\n");
     pthread_current = pthread_next;
     asm volatile("mov r0, %0\n"
                  "ldr r1, [r0]\n"

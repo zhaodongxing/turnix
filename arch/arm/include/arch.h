@@ -63,7 +63,7 @@ static inline void arch_context_switch(void)
 {
     *SCB_ICSR |= SCB_ICSR_PENDSVSET;
     asm volatile("mrs r0,primask\n"
-                 "cpsid i\n"
+                 "cpsie i\n"
                  "msr primask,r0\n");
 }
 

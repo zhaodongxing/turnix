@@ -26,9 +26,24 @@ static unsigned long interrupt_disable(void)
 {
     unsigned long flags;
     asm volatile("mrs %0,primask\n"
+                 "cpsie i\n":"=r"(flags));
+    return flags;
+}
+
+static void interrupt_enable(unsigned long flags)
+{
+    asm volatile("msr primask,%0\n"::"r"(flags));
+}
+
+
+static unsigned long interrupt_disable(void)
+{
+    unsigned long flags;
+    asm volatile("mrs %0,primask\n"
                  "cpsid i\n":"=r"(flags));
     return flags;
 }
+
 static void interrupt_enable(unsigned long flags)
 {
     asm volatile("msr primask,%0\n"::"r"(flags));

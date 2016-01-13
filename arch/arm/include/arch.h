@@ -45,18 +45,6 @@ extern uint32_t _estack;
 
 void arch_init(void);
 
-static inline void arch_disable_interrupt(void)
-{
-    uint32_t flags;
-    asm volatile("cpsid i\n");
-    asm volatile("mrs %0,control":"=r"(flags));
-}
-
-static inline void arch_enable_interrupt(void)
-{
-    asm volatile("cpsie i\n");
-}
-
 static inline unsigned long interrupt_disable(void)
 {
     unsigned long flags;
@@ -74,6 +62,9 @@ static inline void interrupt_enable(unsigned long flags)
 static inline void arch_context_switch(void)
 {
     *SCB_ICSR |= SCB_ICSR_PENDSVSET;
+    asm volatile("mrs r0,primask\n"
+                 "cpsid i\n"
+                 "msr primask,r0\n");
 }
 
 static inline void arch_halt(void)

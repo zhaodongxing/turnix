@@ -41,9 +41,6 @@
 #define CONFIG_TIMESLICE 10
 #endif
 
-pthread_t pthread_current;
-pthread_t pthread_next;
-
 static struct pthread pthreads[CONFIG_PTHREAD_MAX_NUM];
 
 static struct pthread pthread_idle;
@@ -128,6 +125,8 @@ int pthread_setschedprio(pthread_t thread, int priority)
 	return 0;
 }
 
+pthread_t pthread_current;
+pthread_t pthread_next;
 
 void pthread_init(void)
 {
@@ -164,7 +163,19 @@ void __schedule(void)
 
 void schedule(void)
 {
-	arch_context_switch();
+	unsigned long flags;
+
+	if (in_irq) {
+		pthread_next = NULL;
+
+		return;
+	}
+
+	flags = interrupt_disable();
+	__schedule();
+	if (pthread_next != pthread_current)
+		arch_context_switch();
+	interrupt_enable(flags);
 }
 
 static void __pthread_set_running(pthread_t th)
@@ -407,8 +418,6 @@ int pthread_mutex_lock(pthread_mutex_t *mutex)
 		pthread_self()->state = PTHREAD_STATE_SLEEPING;
 		schedule();
 	}
-	interrupt_enable(flags);
-	flags = interrupt_disable();
 	TAILQ_REMOVE(&mutex->wq, &w, link);
 	if (TAILQ_EMPTY(&mutex->wq))
 		mutex->lock = 0;
@@ -525,8 +534,6 @@ int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex,
 	} else {
 		schedule();
 	}
-	interrupt_enable(flags);
-	flags = interrupt_disable();
 	pthread_mutex_lock(mutex);
 	if (!TAILQ_ENTRY_EMPTY(&w.link))
 		TAILQ_REMOVE(&cond->wq, &w, link);

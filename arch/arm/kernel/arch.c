@@ -47,7 +47,7 @@ void __start(void)
     /*start to use psp*/
     asm volatile("msr psp,%0\n"
                  "mov r1,0x02\n"
-                 "msr control,r1\n": :"r"(_edata));
+                 "msr control,r1\n": :"r"(data_end));
 
 	main();
 }

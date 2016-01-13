@@ -4,7 +4,7 @@
 #define CPU_CLOCK_HZ 72000000
 
 /* 100 ms per tick. */
-#define TICK_RATE_HZ 10
+#define TICK_RATE_HZ 100
 
 int timer_init()
 {

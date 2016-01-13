@@ -56,7 +56,7 @@ static int cmd_list(void)
 	const struct shell_cmd *cmd;
 
 	for (cmd = shell_cmd_begin; cmd < shell_cmd_end; ++cmd)
-		printf("%s: %s\n", cmd->exe, cmd->usage ? : cmd->exe);
+		printf("%s: %s\r\n", cmd->exe, cmd->usage ? : cmd->exe);
 
 	return 0;
 }
@@ -79,7 +79,7 @@ static int cmd_exec(int argc, char *argv[])
 
 	cmd = cmd_find(argv[0]);
 	if (!cmd) {
-		printf("no such command: %s\n", argv[0]);
+		printf("no such command: %s\r\n", argv[0]);
 		return -1;
 	}
 
@@ -98,7 +98,7 @@ static int cmd_parse(char *buf, char *argv[], int argv_max)
 	       buf = NULL;
 	}
 	if (argc >= argv_max) {
-		printf("invalid command line\n");
+		printf("invalid command line\r\n");
 		return -1;
 	}
 
@@ -136,7 +136,7 @@ static __shell_cmd struct shell_cmd cmd_exit = {
 
 static int do_help(int argc, char *argv[])
 {
-    printf("enter help\n");
+    printf("enter help\r\n");
 	if (argc == 1) {
 		return cmd_list();
 	} else {
@@ -146,9 +146,9 @@ static int do_help(int argc, char *argv[])
 		for (i = 1; i < argc; ++i) {
 			cmd = cmd_find(argv[i]);
 			if (!cmd) {
-				printf("no such command: %s\n", argv[i]);
+				printf("no such command: %s\r\n", argv[i]);
 			} else {
-				printf("%s: %s\n", cmd->exe,
+				printf("%s: %s\r\n", cmd->exe,
 				       cmd->usage ? : cmd->exe);
 			}
 		}
@@ -187,7 +187,7 @@ static int do_date(int argc, char *argv[])
 	(void)argv;
 	gettimeofday(&tv, &tz);
 	localtime_r(&tv.tv_sec, &tm);
-	printf("%04d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d\n",
+	printf("%04d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d\r\n",
 	       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 	       tm.tm_hour, tm.tm_min, tm.tm_sec,
 	       tz.tz_minuteswest > 0 ? '-' : '+',
@@ -215,7 +215,7 @@ static int do_uptime(int argc, char *argv[])
 		tv.tv_sec %= SECS_PER_DAY;
 	}
 	gmtime_r(&tv.tv_sec, &tm);
-	printf("%02d:%02d:%02d.%06ld\n", tm.tm_hour, tm.tm_min, tm.tm_sec,
+	printf("%02d:%02d:%02d.%06ld\r\n", tm.tm_hour, tm.tm_min, tm.tm_sec,
 	       tv.tv_usec);
 
 	return 0;
@@ -243,8 +243,8 @@ static int do_cal(int argc, char *argv[])
 	(void)argv;
 
 	localtime_r(&now, &tm);
-	printf("   %s %d\n", mon_str[tm.tm_mon], 1900 + tm.tm_year);
-	printf("Su Mo Tu We Th Fr Sa\n");
+	printf("   %s %d\r\n", mon_str[tm.tm_mon], 1900 + tm.tm_year);
+	printf("Su Mo Tu We Th Fr Sa\r\n");
 	wday = (tm.tm_wday + 35 - (tm.tm_mday - 1)) % 7;
 	for (i = 0; i < wday; ++i)
 		printf("   ");
@@ -280,7 +280,7 @@ static void show_thread(pthread_t th)
 		[PTHREAD_STATE_EXIT]		= "exit",
 	};
 
-	printf("%p %s %s %lu.%03lu\n", th, state_str[th->state], th->name,
+	printf("%p %s %s %lu.%03lu\r\n", th, state_str[th->state], th->name,
 	       th->ticks / TICKS_PER_SEC,
 	       (th->ticks % TICKS_PER_SEC) * MSECS_PER_TICK);
 }

@@ -222,6 +222,14 @@ void timer_update(void)
 {
  
 	unsigned long now = ++ticks;
+    switch(now%100){
+    case 0:
+        led_on();
+        break;
+    case 50:
+        led_off();
+        break;
+    }
 
 	update_timeval(&wall_clock.tv);
 	update_timeval(&monotonic_clock);

@@ -17,22 +17,23 @@ void usart_init(void)
     *(GPIOA_CRL) = 0x44444444;
     *(GPIOA_CRH) = 0x000004b0;
 
-    pUSART2->CR1 = 0x0000000C;
-    pUSART2->CR2 = 0x00000000;
-    pUSART2->CR3 = 0x00000000;
-    pUSART2->CR1 |= 0x2000;
+    pUSART1->CR1 = 0x0000000C;
+    pUSART1->CR2 = 0x00000000;
+    pUSART1->CR3 = 0x00000000;
+    pUSART1->BRR = 0x00000271; /*115200bps*/
+    pUSART1->CR1 |= 0x2000;
 }
 
 int putchar(int c)
 {
-    while (!(*(USART2_SR) & USART_FLAG_TXE));
-    *(USART2_DR) = (c & 0xFF);
+    while (!((pUSART1->SR) & USART_FLAG_TXE));
+    pUSART1->DR = (c & 0xFF);
     return 0;
 }
 
 int getchar(void){
-    while(!(*(USART2_SR) & USART_FLAG_RXNE));
-    return *(USART2_DR);
+    while(!((pUSART1->SR) & USART_FLAG_RXNE));
+    return pUSART1->DR;
 }
 
 #if 0

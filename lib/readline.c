@@ -58,7 +58,7 @@ char *readline(const char *prompt)
 		}
 	}
 out:
-    printf("out\n");
+    printf("\r\n");
 	readline_buffer[n] = '\0';
 
 	return (char *)readline_buffer;

@@ -26,7 +26,7 @@ void usart_init(void)
 
 int putchar(int c)
 {
-    while (!((pUSART1->SR) & USART_FLAG_TXE));
+    while(!((pUSART1->SR) & USART_FLAG_TXE));
     pUSART1->DR = (c & 0xFF);
     return 0;
 }

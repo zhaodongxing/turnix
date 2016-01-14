@@ -37,5 +37,5 @@ struct NVIC_table {
     uint32_t USART3;
 };
 
-void __attribute__((naked)) pendsv_handler();
+void  pendsv_handler(void);
 #endif

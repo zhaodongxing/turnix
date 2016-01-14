@@ -222,11 +222,11 @@ void timer_update(void)
 {
  
 	unsigned long now = ++ticks;
-    switch(now%100){
+    switch(now%200){
     case 0:
         led_on();
         break;
-    case 50:
+    case 99:
         led_off();
         break;
     }

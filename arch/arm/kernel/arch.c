@@ -60,7 +60,7 @@ void arch_early_init(void)
     usart_init();
     timer_init();
 }
-
+/*
 int atomic_add_return(int v, volatile int *ptr)
 {
     int ret=0;
@@ -76,6 +76,7 @@ int atomic_add_return(int v, volatile int *ptr)
                  : "r4","r5");
     return ret;
 }
+*/
 
 
 void arch_init(void)

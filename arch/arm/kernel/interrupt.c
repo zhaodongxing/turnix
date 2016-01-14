@@ -17,25 +17,6 @@ void interrupt_init(void){
     
 }
 
-/*interrupt use msp*/
-void pendsv_handler(void)
-{
-    asm volatile("cpsid i\n"
-                 "mrs   r0, psp\n"
-                 "stmdb r0!, {r4-r11}\n"
-                 "mov r1,%0\n"
-                 "str r0,[r1]\n": :"r"(pthread_current));
-    pthread_current = pthread_next;
-    asm volatile("mov r0, %0\n"
-                 "ldr r1, [r0]\n"
-                 "ldmia r1!, {r4-r11}\n"
-                 "msr psp, r1\n"
-                 "orr lr,lr,0x04\n"
-                 "cpsie i\n"
-                 "bx lr": :"r"(pthread_current));
-}
-
-
 void default_handler(void)
 {
 	while (1);

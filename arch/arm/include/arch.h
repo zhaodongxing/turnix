@@ -96,6 +96,7 @@ struct arch_context{
 };
 
 int atomic_add_return(int v, volatile int *ptr);
+void arch_early_init();
 void __start(void);
 void interrupt_init();
 void led_init();

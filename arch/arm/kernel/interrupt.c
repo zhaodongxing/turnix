@@ -6,9 +6,6 @@
 #include <timer.h>
 #include "pthread.h"
 
-
-extern pthread_t pthread_next;
-
 void interrupt_init(void){
     /*init interrupt priority group config
      * 8 group priority 2 sub priority */
@@ -22,16 +19,12 @@ void default_handler(void)
 	while (1);
 }
 
-void hardfault_handler(void)
-{
-	while (1);
-}
-
 void nmi_handler(void) __attribute((weak, alias("default_handler")));
 void memmanage_handler(void) __attribute((weak, alias("default_handler")));
 void busfault_handler(void) __attribute((weak, alias("default_handler")));
 void usagefault_handler(void) __attribute((weak, alias("default_handler")));
 void svc_handler(void) __attribute((weak, alias("default_handler")));
+void hardfault_handler(void) __attribute((weak, alias("default_handler")));
 
 
 __attribute((section(".isr_vector")))

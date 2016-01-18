@@ -42,7 +42,6 @@ int main(struct multiboot_info *info)
 
 	arch_early_init();
 
-    /*
 	if ((info->flags & 1) == 0) {
 		printf("no memory info\n");
 		abort();
@@ -56,8 +55,6 @@ int main(struct multiboot_info *info)
 	printf("  heap:  %08x - %08x\n", (uint32_t)&kernel_end,
 	       info->mem_upper);
 
-     */
-
 	arch_init();
 	pthread_init();
 
@@ -68,9 +65,9 @@ int main(struct multiboot_info *info)
 		(**func)();
 	}
 	in_irq = 0;
+	interrupt_enable(flags);
 
 	pthread_yield();
-	interrupt_enable(flags);
 
 	for (;;)
 		arch_halt();

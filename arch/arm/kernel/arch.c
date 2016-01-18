@@ -21,12 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #include <arch.h>
 #include <pthread.h>
 #include <kernel.h>
 #include <hw_init.h>
+#include <multiboot.h>
+
 static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[64];
+extern int main(struct multiboot_info *info);
+static struct multiboot_info boot_info;
 
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)
@@ -44,12 +47,16 @@ void __start(void)
 	uint32_t *bss_end = &_ebss;
 	while (bss_begin < bss_end) *bss_begin++ = 0;
 
+    boot_info.flags = 0;
+    boot_info.mem_lower = (uint64_t)_sdata; 
+    boot_info.mem_upper = (uint64_t)_ebss; 
+
     /*start to use psp*/
     asm volatile("msr psp,%0\n"
                  "mov r1,0x02\n"
                  "msr control,r1\n": :"r"(data_end));
 
-	main();
+	main(&boot_info);
 }
 
 void arch_early_init(void)
@@ -60,24 +67,6 @@ void arch_early_init(void)
     usart_init();
     timer_init();
 }
-/*
-int atomic_add_return(int v, volatile int *ptr)
-{
-    int ret=0;
-    asm volatile("again: ldrex r4, %1\n" 
-	             "add r4,r4,%3\n"
-                 "strex r5,r4,%0\n"
-                 "cmp r5,#0\n"
-                 "ite eq\n"
-                 "streq r4,%2\n"
-                 "bne again\n"
-                 : "=m"(*ptr),"=m"(ret)
-                 : "m"(*ptr),"r"(v)
-                 : "r4","r5");
-    return ret;
-}
-*/
-
 
 void arch_init(void)
 {

@@ -27,12 +27,17 @@
 #include <hw_init.h>
 #include <multiboot.h>
 
-static __attribute__((section(".data.idle"))) __attribute((used)) int idle_stack[64];
-extern int main(struct multiboot_info *info);
+extern uint32_t _sidata;   //start address of data section in flash
+extern uint32_t _sdata;    //start address of data section in memory
+extern uint32_t _edata;    //end address of data section in memory
+extern uint32_t _sbss;     //start address of bss section in memory
+extern uint32_t _ebss;     //end address of bss section in memory
+
+/*stack for idle task*/
+static __attribute__((section(".idle"))) __attribute((used)) int idle_stack[64];
 static struct multiboot_info boot_info;
 
-#define THREAD_PSP (0XFFFFFFFD)
-#define PSR_THUMB  (0X01000000)
+extern int main(struct multiboot_info *info);
 
 void start(void)
 {
@@ -73,6 +78,8 @@ void arch_init(void)
 
 }
 
+
+#define PSR_THUMB  (0X01000000)
 void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 		               void *(*start_routine)(void *), void *arg)
 {

@@ -3,9 +3,6 @@
 #include <stdint.h>
 
 #define REG	volatile uint32_t
-//#define __REG		REG *
-#define __CREG_TYPE volatile uint8_t
-#define __CREG      __CREG_TYPE *     
 
 struct SCB_reg{
 	REG CPUID;
@@ -20,7 +17,6 @@ struct SCB_reg{
 };
 
 
-#define SCB_ICSR_PENDSVSET   (uint32_t) (1 << 28)
 
 struct RCC_reg{
 	REG CR;

@@ -21,8 +21,6 @@ SECTIONS
 		shell_cmd_end = .;
 		*(.rodata)
 		*(.rodata.*)
-		_sromdev = .;
-		_eromdev = .;
 		_sidata = .;
 	} >FLASH
 
@@ -31,7 +29,7 @@ SECTIONS
 		_sdata = .;
 		*(.data)
         *(.shell.cmd)
-        *(.data.idle)
+        *(.idle)
 		_edata = .;
 	} >RAM
 

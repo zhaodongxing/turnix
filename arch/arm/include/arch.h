@@ -28,20 +28,7 @@
 #include <reg.h>
 #include <arch.h>
 #include <stdio.h>
-
-/* start address for the initialization values of the .data section.
- * defined in linker script */
-extern uint32_t _sidata;
-/* start address for the .data section. defined in linker script */
-extern uint32_t _sdata;
-/* end address for the .data section. defined in linker script */
-extern uint32_t _edata;
-/* start address for the .bss section. defined in linker script */
-extern uint32_t _sbss;
-/* end address for the .bss section. defined in linker script */
-extern uint32_t _ebss;
-/* end address for the stack. defined in linker script */
-extern uint32_t _estack;
+#define SCB_ICSR_PENDSVSET   (uint32_t) (1 << 28)
 
 static inline void arch_context_switch(void)
 {

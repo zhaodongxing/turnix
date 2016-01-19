@@ -38,7 +38,6 @@ extern unsigned int kernel_end;
 int main(struct multiboot_info *info)
 {
 	init_func_t * const *func;
-    int flags = 0;
 
 	arch_early_init();
 
@@ -58,15 +57,14 @@ int main(struct multiboot_info *info)
 	arch_init();
 	pthread_init();
 
-	flags = interrupt_disable();
 	in_irq = 1;
 	for (func = application_init_begin; func < application_init_end;
 	     ++func) {
 		(**func)();
 	}
 	in_irq = 0;
-	interrupt_enable(flags);
 
+	arch_enable_interrupt();
 	pthread_yield();
 
 	for (;;)

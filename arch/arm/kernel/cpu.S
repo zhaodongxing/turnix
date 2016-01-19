@@ -4,6 +4,9 @@
 .extern pthread_next
 .extern pthread_current
 .global pendsv_handler,atomic_add_return
+.global arch_enable_interrupt
+.global interrupt_enable
+.global interrupt_disable
 
 pendsv_handler:
     cpsid i
@@ -33,7 +36,18 @@ atomic_add_return:
     bne   atomic_add_return
     bx    lr
 
+arch_enable_interrupt:
+   cpsie i
+   bx lr
     
+interrupt_disable:
+   mrs r0,primask
+   cpsid i
+   bx lr
+
+interrupt_enable:
+   msr primask,r0
+   bx lr
 
 
 

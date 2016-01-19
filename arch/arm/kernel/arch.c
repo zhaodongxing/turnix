@@ -34,7 +34,7 @@ static struct multiboot_info boot_info;
 #define THREAD_PSP (0XFFFFFFFD)
 #define PSR_THUMB  (0X01000000)
 
-void __start(void)
+void start(void)
 {
 	/* Copy the data segment initializers from flash to SRAM */
 	uint32_t *idata_begin = &_sidata;
@@ -70,6 +70,7 @@ void arch_early_init(void)
 
 void arch_init(void)
 {
+
 }
 
 void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
@@ -94,5 +95,5 @@ void arch_pthread_init(pthread_t th, void (*wrapper)(void *(*)(void *), void *),
 }
 
 void reboot(void){
-    *SCB_AIRCR|=0x4;
+    pSCB->AIRCR|=0x4;
 }

@@ -220,16 +220,7 @@ static void update_timeval(struct timeval *tv)
 
 void timer_update(void)
 {
- 
 	unsigned long now = ++ticks;
-    switch(now%200){
-    case 0:
-        led_on();
-        break;
-    case 99:
-        led_off();
-        break;
-    }
 
 	update_timeval(&wall_clock.tv);
 	update_timeval(&monotonic_clock);

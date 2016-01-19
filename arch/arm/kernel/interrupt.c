@@ -9,8 +9,8 @@
 void interrupt_init(void){
     /*init interrupt priority group config
      * 8 group priority 2 sub priority */
-    *SCB_AIRCR=(*SCB_AIRCR&0xfffff8ff)|(0x4<<8);
-    *SCB_SHPR3=(uint32_t)0xEFFF0000;
+    pSCB->AIRCR=(pSCB->AIRCR&0xfffff8ff)|(0x4<<8);
+    pSCB->SHPR3=(uint32_t)0xEFFF0000;
     
 }
 
@@ -30,7 +30,7 @@ void hardfault_handler(void) __attribute((weak, alias("default_handler")));
 __attribute((section(".isr_vector")))
 struct NVIC_table isr = {
     .stack     = (uint32_t)&_estack,
-    .Reset     = (uint32_t)__start,
+    .Reset     = (uint32_t)start,
     .NMI       = (uint32_t)nmi_handler,
     .HardFault = (uint32_t)hardfault_handler,
     .MemManage = (uint32_t)memmanage_handler,

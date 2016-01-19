@@ -43,25 +43,9 @@ extern uint32_t _ebss;
 /* end address for the stack. defined in linker script */
 extern uint32_t _estack;
 
-void arch_init(void);
-
-static inline unsigned long interrupt_disable(void)
-{
-    unsigned long flags;
-    asm volatile("mrs %0,primask\n"
-                 "cpsid i\n"
-                 :"=r"(flags));
-    return flags;
-}
-
-static inline void interrupt_enable(unsigned long flags)
-{
-    asm volatile("msr primask,%0\n"::"r"(flags));
-}
-
 static inline void arch_context_switch(void)
 {
-    *SCB_ICSR |= SCB_ICSR_PENDSVSET;
+    pSCB->ICSR |= SCB_ICSR_PENDSVSET;
     asm volatile("mrs r0,primask\n"
                  "cpsie i\n"
                  "msr primask,r0\n");
@@ -95,13 +79,16 @@ struct arch_context{
     unsigned long sp;
 };
 
-int atomic_add_return(int v, volatile int *ptr);
+void start(void);
 void arch_early_init();
-void __start(void);
+void arch_init();
+void arch_enable_interrupt();
 void interrupt_init();
-void led_init();
-void led_on();
-void led_off();
+void reboot(void);
+int  atomic_add_return(int v, volatile int *ptr);
+unsigned long interrupt_disable(void);
+void interrupt_enable(unsigned long flags);
+
 
 #endif
 
